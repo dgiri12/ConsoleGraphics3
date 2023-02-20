@@ -1,0 +1,9 @@
+//Comments:
+//C.1; this second kind of space character is encoded differently, so including both gets rid of transparency errors.
+// C.2; unicode format demands file be read in binary form . So carriage return needs to be filtered out,
+//		the final string image needs to be in a single line
+//C.3;	//accepts a file name, returns an id number that can be assigned to a variable to
+		//represent this sprite in the main program, then also increments the spriteIndexCounter,
+		//so that more sprites added will just contain incremental unique ids. This id will be the
+		//sprite's position in the array. A dynamic array is being used because I want random access.
+		//Linked list is sequential access, so would require more read time.

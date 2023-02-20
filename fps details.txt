@@ -1,0 +1,9 @@
+with thread 45 fps
+without thread 43 fps
+with no writeconsolecharacter 58
+
+the whole render loop shipped to thread 32
+
+when everything shipped to thread, but consolewrite function only given to main thread, fps back to 45.
+
+the very presence of a thread results in fps-5
