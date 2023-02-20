@@ -27,9 +27,9 @@ using namespace std;
 
 class ConsoleGraphics3
 {
-private:
+protected:
 	//Global class variables
-	DWORD dummy;
+	DWORD dummy = 0;;
 	ULONGLONG FPSCounterTime = GetTickCount64(); //used for fps calculation
 	Screen screen = { 140,45,L"" }; //Anything made from this class will forever have these dimensions
 	wstring screenText = L"";
@@ -67,12 +67,11 @@ private:
 	//The engine constantly updates these.
 	bool* eventArray = new bool[eventArraySize];
 
-public://Function declaration
-	void gameStart(HANDLE* _handle, HWND* _hwnd);
+protected://Function declaration
 	int getFps(int _frame);
 	void gameRender();
-	void flipFpsSwitch(bool _fpsSwitch);
-	Screen* getScreen();
+	
+	
 	int addSprite(string _filename);//C.3
 	int addInstance(int _spriteIndex, int _actionIndex, int _x, int _y, int _depth);
 	int addTimer();
@@ -87,4 +86,11 @@ public://Function declaration
 	bool checkCollision(int _instanceIndex1, int _instanceIndex2);
 	void drawText(int _x, int _y, wstring _text);
 	void setScreenText(wstring _screenText);
+public:
+	Screen* getScreen();
+	void gameStart(HANDLE* _handle, HWND* _hwnd);
+	void flipFpsSwitch(bool _fpsSwitch);
+	virtual void onInstanceCreateApplyAction(int _actionIndex, int _instanceIndex) {}
+	virtual void gameUpdate() {}
+	virtual void ongoingInstanceApplyAction(int _actionIndex, int _instanceIndex) {}
 };

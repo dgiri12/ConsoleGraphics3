@@ -21,34 +21,12 @@ private:
 	//ActionVariables actionVariables;
 	int actionIndex;
 	int spriteIndex;
+	int x, y, depth, hspeed, vspeed;
 	bool firstDraw = true; //C.5
 	ULONGLONG startTime = GetTickCount64(); //used for sprite animation
 	bool Null = false;
-	int dummy;
 	
-	//int variables
-	struct VariableInt
-	{
-		string name;
-		int value;
-	};
-	int variableIntIndexCounter = 0;//the first variableInt index would be index '4' that way
-	VariableInt* variableIntArray = new VariableInt[1];
-	VariableInt* tempVariableIntArray = nullptr;
-	int variableIntArraySize = 1;
-	bool firstVariableIntLoaded = false;
 
-	// boolean variables
-	struct VariableBool
-	{
-		string name;
-		bool value;
-	};
-	int variableBoolIndexCounter = 0;//the first Bool index would be index '0' that way
-	VariableBool* variableBoolArray = new VariableBool[1];
-	VariableBool* tempVariableBoolArray = nullptr;
-	int variableBoolArraySize = 1;
-	bool firstVariableBoolLoaded = false;
 	
 	//event status identifiers indices, naming convention, put constants (eg events) in all caps
 	const int insEventArraySize = 1; //ALso look at C.7
@@ -96,16 +74,6 @@ public:
 	void setDepth(int _depth);
 	void setHSpeed(int _hspeed);
 	void setVSpeed(int _vspeed);
-
-	//VariableInt methods
-	int addVariableInt(string _name, int _value);
-	int getVariableIntValue(int _variableIntIndex);
-	void setVariableIntValue(int _variableIntIndex,int _variableIntValue);
-
-	//VariableBool methods
-	int addVariableBool(string _name, bool _value);
-	bool getVariableBoolValue(int _variableBoolIndex);
-	void setVariableBoolValue(int _variableBoolIndex, bool _variableBoolValue);
 
 	//event methods
 	void updateInstanceEvent(); //C.6

@@ -4,19 +4,19 @@ Instance::Instance()
 {
 	spriteIndex = -1;
 	actionIndex = -1;
-	dummy=addVariableInt("x", 0);
-	dummy=addVariableInt("y", 0);
-	dummy = addVariableInt("depth", 0);
-	dummy = addVariableInt("hspeed", 0);
-	dummy = addVariableInt("vspeed", 0);
+	x = 0;
+	y = 0;
+	depth = 0;
+	hspeed = 0;
+	vspeed = 0;
 }
 Instance::Instance(int _x, int _y, int _depth)
 {
-	dummy = addVariableInt("x", _x);
-	dummy = addVariableInt("y", _y);
-	dummy = addVariableInt("depth", _depth);
-	dummy = addVariableInt("hspeed", 0);
-	dummy = addVariableInt("vspeed", 0);
+	x = _x;
+	y = _y;
+	depth = _depth;
+	hspeed = 0;
+	vspeed = 0;
 	spriteIndex = -1;
 	actionIndex = -1;
 }
@@ -25,11 +25,11 @@ Instance::Instance(int _spriteIndex, int _actionIndex, int _x, int _y, int _dept
 {
 	spriteIndex = _spriteIndex;
 	actionIndex = _actionIndex;
-	dummy = addVariableInt("x", _x);
-	dummy = addVariableInt("y", _y);
-	dummy = addVariableInt("depth", _depth);
-	dummy = addVariableInt("hspeed", 0);
-	dummy = addVariableInt("vspeed", 0);
+	x = _x;
+	y = _y;
+	depth = _depth;
+	hspeed = 0;
+	vspeed = 0;
 }
 void Instance::createInstance(int _spriteIndex, int _actionIndex, int _x, int _y, int _depth)
 {
@@ -86,125 +86,47 @@ void Instance::setNull(bool _Null)
 }
 int Instance::getX()
 {
-	return variableIntArray[0].value;
+	return x;
 }
 int Instance::getY()
 {
-	return variableIntArray[1].value;
+	return y;
 }
 int Instance::getDepth()
 {
-	return variableIntArray[2].value;
+	return depth;
 }
 
 int Instance::getHSpeed()
 {
-	return variableIntArray[3].value;
+	return hspeed;
 }
 int Instance::getVSpeed()
 {
-	return variableIntArray[4].value;
+	return vspeed;
 }
 
  //Setters
 void Instance::setX(int _x)
 {
-	variableIntArray[0].value = _x;
+	x = _x;
 }
 void Instance::setY(int _y)
 {
-	variableIntArray[1].value = _y;
+	y = _y;
 }
 void Instance::setDepth(int _depth)
 {
-	variableIntArray[2].value=_depth;
+	depth=_depth;
 }
 
 void Instance::setHSpeed(int _hspeed)
 {
-	variableIntArray[3].value=_hspeed;
+	hspeed=_hspeed;
 }
 void Instance::setVSpeed(int _vspeed)
 {
-	variableIntArray[4].value=_vspeed;
-}
-
-int Instance::addVariableInt(string _name, int _value)
-{
-	//Different routine if the  variable is the first one to be added
-	if (firstVariableIntLoaded == false) {
-		firstVariableIntLoaded = true;
-		variableIntArray[variableIntIndexCounter].name = _name;
-		variableIntArray[variableIntIndexCounter].value = _value;
-		return variableIntIndexCounter;
-	}
-	int newSize = variableIntArraySize + 1;
-	tempVariableIntArray = new VariableInt[newSize];
-	for (int i = 0; i < variableIntArraySize; i++)
-	{
-		tempVariableIntArray[i] = variableIntArray[i];
-	}//copies older sprites into new temp location
-	tempVariableIntArray[newSize - 1].name = _name;
-	tempVariableIntArray[newSize - 1].value = _value;//final temp position is a fresh sprite
-	//so create it using filename provided.
-	//tempSpriteArray contains new data, so delete the old array, and have the old point to the new one,
-	//and nullify the new one, to be reused later. Update values of remaining variables.
-	delete[] variableIntArray;
-	variableIntArray = tempVariableIntArray;
-	tempVariableIntArray = nullptr;
-	variableIntArraySize = newSize;
-	variableIntIndexCounter++;
-	return variableIntIndexCounter;
-}
-
-int Instance::getVariableIntValue(int _variableIntIndex)
-{
-	return variableIntArray[_variableIntIndex].value;
-}
-
-void Instance::setVariableIntValue(int _variableIntIndex, int _variableIntValue)
-{
-	variableIntArray[_variableIntIndex].value = _variableIntValue;
-}
-
-//VariableBool methods
-
-int Instance::addVariableBool(string _name, bool _value)
-{
-	//Different routine if the  variable is the first one to be added
-	if (firstVariableBoolLoaded == false) {
-		firstVariableBoolLoaded = true;
-		variableBoolArray[variableBoolIndexCounter].name = _name;
-		variableBoolArray[variableBoolIndexCounter].value = _value;
-		return variableBoolIndexCounter;
-	}
-	int newSize = variableBoolArraySize + 1;
-	tempVariableBoolArray = new VariableBool[newSize];
-	for (int i = 0; i < variableBoolArraySize; i++)
-	{
-		tempVariableBoolArray[i] = variableBoolArray[i];
-	}//copies older sprites into new temp location
-	tempVariableBoolArray[newSize - 1].name = _name;
-	tempVariableBoolArray[newSize - 1].value = _value;//final temp position is a fresh sprite
-	//so create it using filename provided.
-	//tempSpriteArray contains new data, so delete the old array, and have the old poBool to the new one,
-	//and nullify the new one, to be reused later. Update values of remaining variables.
-	delete[] variableBoolArray;
-	variableBoolArray = tempVariableBoolArray;
-	tempVariableBoolArray = nullptr;
-	variableBoolArraySize = newSize;
-	variableBoolIndexCounter++;
-	return variableBoolIndexCounter;
-}
-
-bool Instance::getVariableBoolValue(int _variableBoolIndex)
-{
-	return variableBoolArray[_variableBoolIndex].value;
-}
-
-void Instance::setVariableBoolValue(int _variableBoolIndex, bool _variableBoolValue)
-{
-	variableBoolArray[_variableBoolIndex].value = _variableBoolValue;
+	vspeed=_vspeed;
 }
 bool *Instance::getFirstDraw()
 {
@@ -213,7 +135,7 @@ bool *Instance::getFirstDraw()
 
 void Instance::updateInstanceEvent()
 {
-	//update the 
+	//update the events
 }
 void Instance::setInsEvent(int _insEventIndex, bool _status)
 {
@@ -230,15 +152,10 @@ void Instance::instanceCopy(Instance _instance)
 	firstDraw = _instance.firstDraw; //C.5
 	startTime = _instance.startTime;
 	Null = _instance.Null;
-	variableIntIndexCounter = _instance.variableIntIndexCounter;//the first variableInt index would be index '4' that way
-	variableIntArray = _instance.variableIntArray;
-	tempVariableIntArray = _instance.tempVariableIntArray;
-	variableIntArraySize = _instance.variableIntArraySize;
-	firstVariableIntLoaded = _instance.firstVariableIntLoaded;
-	variableBoolIndexCounter = _instance.variableBoolIndexCounter;//the first Bool index would be index '0' that way
-	variableBoolArray = _instance.variableBoolArray;
-	tempVariableBoolArray = _instance.tempVariableBoolArray;
-	variableBoolArraySize = _instance.variableBoolArraySize;
-	firstVariableBoolLoaded = _instance.firstVariableBoolLoaded;
 	insEventArray = _instance.insEventArray;
+	x = _instance.x;
+	y = _instance.y;
+	depth = _instance.depth;
+	hspeed = _instance.hspeed;
+	vspeed = _instance.vspeed;
 }

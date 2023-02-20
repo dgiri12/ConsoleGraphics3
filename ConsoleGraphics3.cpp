@@ -33,15 +33,6 @@ void ConsoleGraphics3::gameRender()
 	{
 		if (instanceArray[i].isNull()) continue; //skip if it's a null instance
 		spriteArray[instanceArray[i].getSpriteIndex()].drawSprite(instanceArray[i].getX(), instanceArray[i].getY(), &screen, instanceArray[i].getStartTime(),instanceArray[i].getFirstDraw());
-		//I chose this place to update local events of instances
-		if (spriteArray[instanceArray[i].getSpriteIndex()].getImageIndex()
-			== spriteArray[instanceArray[i].getSpriteIndex()].getNoOfImages()) {
-			instanceArray[i].setInsEvent(evInsENDOFANIMATION, true);
-		}
-		else
-		{
-			instanceArray[i].setInsEvent(evInsENDOFANIMATION, false);
-		}
 	}
 	//Then print screen variable onto the console
 	drawText(5, 4, screenText);
