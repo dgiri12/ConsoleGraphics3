@@ -1,2 +1,12 @@
-﻿  main.cpp
-  ConsoleGraphics1.vcxproj -> C:\Users\Dj\source\repos\ConsoleGraphics7\x64\Debug\ConsoleGraphics7.exe
+﻿  ConsoleGraphics3.cpp
+  Instance.cpp
+  Particles.cpp
+  putToTheSide.cpp
+  main.cpp
+E:\DellXPS13SyncedFolders\c.users.dipu1.source\repos\ConsoleGraphics8\main.cpp(8,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Sprite.cpp
+E:\DellXPS13SyncedFolders\c.users.dipu1.source\repos\ConsoleGraphics8\Sprite.cpp(97,20): warning C4244: 'initializing': conversion from 'double' to 'ULONGLONG', possible loss of data
+E:\DellXPS13SyncedFolders\c.users.dipu1.source\repos\ConsoleGraphics8\Sprite.cpp(104,20): warning C4244: '=': conversion from 'double' to 'ULONGLONG', possible loss of data
+E:\DellXPS13SyncedFolders\c.users.dipu1.source\repos\ConsoleGraphics8\Sprite.cpp(108,20): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+  ConsoleGraphics1.vcxproj -> E:\DellXPS13SyncedFolders\c.users.dipu1.source\repos\ConsoleGraphics8\x64\Debug\ConsoleGraphics8.exe

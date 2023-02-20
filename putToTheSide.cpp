@@ -52,3 +52,10 @@
 //}
 
 //This code makes it that holding down space fires weapon at certain interval
+
+//Randomized creation of instances
+	/*for (int i = 0; i < 5; i++)
+	{
+		int temp = cg4.addInstance(sprSpaceship, acSpaceship2, rand() % (roomWidth - 10) + 10,
+			rand() % (roomHeight - 20) + 10, 0);
+	}*/

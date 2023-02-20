@@ -1,11 +1,11 @@
-//ConsoleGraphics7
-//contains userdefined Int and Bool variable addition functionality for instances.
-//only contains test variables, this functionality hasn't been implemented into the program yet.
+//ConsoleGraphics8
+//Done-> putting all variables inside instances, the main program accessed these variables using methods.
 
 #include"main.h"
 
 int main()
 {
+	srand(time(NULL));
 	//Startup Routine
 	HANDLE myHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 	HWND hwnd = GetConsoleWindow();
@@ -17,12 +17,15 @@ int main()
 	cg4.gameStart(&myHandle,&hwnd); //game starts here
 	cg4.flipFpsSwitch(true); 
 
-	//Oncreate routine for some instances
-	Instance *change = cg4.getInstance(objSpaceship2);
-	ActionVariables changeVar = change->getActionVariables();
-	changeVar.hspeed = 1;
-	change->setActionVariables(changeVar);
-	change = nullptr;
+	//Execute onCreate() routines for each instance, this function helps to set initial values for instances, for example to
+	//set initial vertical or horizontal speed.
+	for (int i = 0; i < cg4.getInstanceArraySize(); i++)
+	{
+		Instance* current = cg4.getInstance(i);
+		if (current->isNull()) continue; //skip null instances
+		onInstanceCreateApplyAction(current->getActionIndex(), i);
+	}
+
 
 	while (1)//main game loop still happens in the main program
 	{
@@ -40,113 +43,188 @@ void gameUpdate()
 	cg4.setEvent(evVK_S, GetKeyState(83) < 0);//S
 	cg4.setEvent(evVK_D, GetKeyState(68) < 0);//D
 	cg4.setEvent(evVK_SPACE, GetKeyState(32) < 0);//space
-	//bool toggle = (state & 1) != 0;
-	//setEvent(evVK_A, true); //simulate a button press
-	//setEvent(evVK_S, true);
+	cg4.setEvent(evVK_E, GetKeyState(69) < 0);// E=69
+	
+	if (cg4.checkEvent(evVK_E) && enemyRespawning==false) {
+		cg4.getTimer(enemyRespawnTimer)->resetTime();
+		enemyRespawning = true;
+	}
+	if (enemyRespawning == true)
+	{
+		if (cg4.getTimer(enemyRespawnTimer)->getElapsedTime() > 1000) {
+			int temp = cg4.addInstance(sprSpaceship, acSpaceship2, rand() % (roomWidth - 10) + 10,
+				rand() % (roomHeight - 20) + 10, 0);
+			onInstanceCreateApplyAction(acSpaceship2, temp);
+			enemyRespawning = false;
+		}
+	}
+	if (playerDestroyed == true)
+	{
+		if (cg4.getTimer(playerResetTimer)->getElapsedTime() > 1000)
+		{
+			int objSpaceship = cg4.addInstance(sprSpaceship, acSpaceship, 30, 30, 0);
+			onInstanceCreateApplyAction(acSpaceship, objSpaceship);
+			playerDestroyed = false;
+		}
+	}
+
 
 	//Iterate through the instances inside the game engine
 	//and update it
+
 	for (int i = 0; i < cg4.getInstanceArraySize(); i++)
 	{
 		Instance *instance=cg4.getInstance(i);
 		if (instance->isNull()) continue; //skip null instances
-		instance->setActionVariables(applyAction(instance->getActionIndex(), instance->getActionVariables(),i));
+		ongoingInstanceApplyAction(instance->getActionIndex(), i);
 	}
+	
 	cg4.gameRender();
 }
 
-ActionVariables applyAction(int _actionIndex, ActionVariables _actVar, int _instanceIndex)
+void onInstanceCreateApplyAction(int _actionIndex, int _instanceIndex)
 {
-	//doing this so I don't have to type _actVar all the time
-	int x = _actVar.x;
-	int y = _actVar.y;
-	int depth = _actVar.depth;
-	int hspeed = _actVar.hspeed;
-	int vspeed = _actVar.vspeed;
+	Instance* current = cg4.getInstance(_instanceIndex);
+
+	switch (_actionIndex) //Never forget the break keyword after a case statement!!
+	{
+	case acSpaceship:
+		charge = current->addVariableInt("charge", 0);
+		speed = current->addVariableInt("speed", 1);
+		activate = current->addVariableBool("activate", false);
+		canShoot = current->addVariableBool("canShoot", true);
+		inBulletTimer = current->addVariableInt("inBulletTimer", cg4.addTimer()); //this is a local timer
+		break;
+	case acSpaceship2:
+		//Choose an initial VSpeed of up or down direction besides zero
+		/*while (current->getVSpeed() == 0)
+		{
+			int vs = rand() % 2 + 1;
+			if (vs == 1) current->setVSpeed(1);
+			if (vs == 2) current->setVSpeed(-1);
+		}*/
+		while (current->getHSpeed() == 0)
+		{
+			int hs = rand() % 2 + 1;
+			if (hs == 1) current->setHSpeed(1);
+			if (hs == 2) current->setHSpeed(-1);
+		}
+		break;
+	case acBullet:
+		current->setVSpeed(-2); //set initial speed for bullet
+		break;
+	default:
+		break;
+	}
+}
+void ongoingInstanceApplyAction(int _actionIndex, int _instanceIndex)
+{
 	Instance* current = cg4.getInstance(_instanceIndex);
 	Timer* bulletTimer;
 
 	switch (_actionIndex) //Never forget the break keyword after a case statement!!
 	{
-	case acSpaceship: 
-		hspeed = 0;
-		vspeed = 0;
-		bulletTimer = cg4.getTimer(objSpaceship.inBulletTimer);
+	case acSpaceship:
+		current->setHSpeed(0);
+		current->setVSpeed(0);
+		bulletTimer = cg4.getTimer(current->getVariableIntValue(inBulletTimer));
 		//Make appropriate sprite changes
-		if (objSpaceship.charge == 0) current->setSpriteIndex(sprSpaceship);
-		if (objSpaceship.charge > 40) current->setSpriteIndex(sprSpaceshipCharging);
-		if (objSpaceship.charge >= 100) current->setSpriteIndex(sprSpaceshipFullyCharged);
+		if (current->getVariableIntValue(charge) == 0) current->setSpriteIndex(sprSpaceship);
+		if (current->getVariableIntValue(charge) > 40) current->setSpriteIndex(sprSpaceshipCharging);
+		if (current->getVariableIntValue(charge) >= 100) current->setSpriteIndex(sprSpaceshipFullyCharged);
 
-		current->setUserVariableBoolValue(activate, true);
-		if (current->getUserVariableBoolValue(activate)) {
-			if (cg4.checkEvent(evVK_A)) hspeed = -current->getUserVariableIntValue(speed);
-			if (cg4.checkEvent(evVK_W)) vspeed = -current->getUserVariableIntValue(speed);
-			if (cg4.checkEvent(evVK_S)) vspeed = current->getUserVariableIntValue(speed);
-			if (cg4.checkEvent(evVK_D)) hspeed = current->getUserVariableIntValue(speed);
+		current->setVariableBoolValue(activate, true);
+		//current->setVariableBoolValue(canShoot);
+		if (current->getVariableBoolValue(activate)) {
+			if (cg4.checkEvent(evVK_A)) current->setHSpeed(-current->getVariableIntValue(speed));
+			if (cg4.checkEvent(evVK_W)) current->setVSpeed(-current->getVariableIntValue(speed));
+			if (cg4.checkEvent(evVK_S)) current->setVSpeed(current->getVariableIntValue(speed));
+			if (cg4.checkEvent(evVK_D))	current->setHSpeed(current->getVariableIntValue(speed));
 		}
-
 		if (cg4.checkEvent(evVK_SPACE)) {
-			if (objSpaceship.charge < 100)objSpaceship.charge++;
-			if (objSpaceship.canShoot == true) {
-				int temp = cg4.addInstance(sprBullet, acBullet, x, y, 0);
+			if (current->getVariableIntValue(charge) < 100)current->setVariableIntValue(charge, current->getVariableIntValue(charge) + 1);
+			if (current->getVariableBoolValue(canShoot) == true) {
+				int temp = cg4.addInstance(sprBullet, acBullet, current->getX(), current->getY(), 0);
+				onInstanceCreateApplyAction(acBullet, temp); //call this 2nd function each time you create an instance,
+				//because the "on creation" needs to be called for a new instance, this is what helps set the initial VSpeed of a 
+				//bullet even though it was created in the middle of the game
+				current = cg4.getInstance(_instanceIndex); //reupdating the current pointer because "addInstance" method changes the array structure,
+				//and we end up losing the address that current pointed to, so obviously none of the variable operations would work after that.
+				//update current pointer each time a new instance is created. This is not required outsideof the applyAction function.
 				bulletTimer->resetTime();
-				objSpaceship.canShoot = false;
+				current->setVariableBoolValue(canShoot, false);
 			}
 		}
-		if (objSpaceship.canShoot == false && !cg4.checkEvent(evVK_SPACE))
+		if (current->getVariableBoolValue(canShoot) == false && !cg4.checkEvent(evVK_SPACE))
 		{
 			if (bulletTimer->getElapsedTime() >= 250)
 			{
-				objSpaceship.canShoot = true;
+				current->setVariableBoolValue(canShoot, true);
 			}
 		}
 		if (!cg4.checkEvent(evVK_SPACE))
 		{
-			if (objSpaceship.charge >= 100)
+			if (current->getVariableIntValue(charge) >= 100)
 			{
-				int temp = cg4.addInstance(sprFullChargeBullet, acBullet, x, y, 0);
-				objSpaceship.charge = 0;
+				int temp = cg4.addInstance(sprFullChargeBullet, acBullet, current->getX(), current->getY(), 0);
+				onInstanceCreateApplyAction(acBullet, temp);
+				current = cg4.getInstance(_instanceIndex);
+				current->setVariableIntValue(charge, 0);
 				break;
 			}
-			if (objSpaceship.charge > 40)
+			if (current->getVariableIntValue(charge) > 40)
 			{
-				int temp = cg4.addInstance(sprChargeBullet, acBullet, x, y, 0);
-				objSpaceship.charge = 0;
+				int temp = cg4.addInstance(sprChargeBullet, acBullet, current->getX(), current->getY(), 0);
+				onInstanceCreateApplyAction(acBullet, temp);
+				current = cg4.getInstance(_instanceIndex);
+				current->setVariableIntValue(charge, 0);
 				break;
 			}
 		}
 		if (cg4.checkCollision(_instanceIndex, objSpaceship2))
 		{
+			int temp = cg4.addInstance(sprExplosion, acExplosion, current->getX(), current->getY(), 0);
+			current = cg4.getInstance(_instanceIndex);
 			cg4.destroyInstance(_instanceIndex);
-			int temp = cg4.addInstance(sprExplosion, acExplosion, x, y, 0);
+			cg4.getTimer(playerResetTimer)->resetTime();
+			playerDestroyed = true;
+
 		}
 		break;
 	case acBullet:
-		vspeed = -2;
-		if (y < 0) cg4.destroyInstance(_instanceIndex);
+		if (current->getY() < 0) cg4.destroyInstance(_instanceIndex);
+
 		if (cg4.checkCollision(_instanceIndex, objSpaceship2))
 		{
 			cg4.destroyInstance(_instanceIndex);
-			int temp = cg4.addInstance(sprExplosion, acExplosion, 
-				cg4.getInstance(objSpaceship2)->getX(), 
+			int temp = cg4.addInstance(sprExplosion, acExplosion,
+				cg4.getInstance(objSpaceship2)->getX(),
 				cg4.getInstance(objSpaceship2)->getY(), 0);
- 			cg4.destroyInstance(objSpaceship2);
+			//NOT NEEDED just for ref->current = cg4.getInstance(_instanceIndex);
+			//current needs to be reset when new instances are added,
+			//but when both objects are destroyed, current need not be updated. Also, keep instance destruction at
+			//the end of the action, always, or some portion of code won't be executed.
+			cg4.destroyInstance(objSpaceship2);
 		}
 		break;
 	case acSpaceship2:
-		if (x > screen->screenWidth - cg4.getSprite(current->getSpriteIndex())->getSprWidth()) hspeed = -1;
-		if (x < 0) hspeed = 1;
+		//Flip direction when spaceship goes outside screen
+		if (current->getX() > roomWidth - cg4.getSprite(current->getSpriteIndex())->getSprOriginX()) {
+			current->setHSpeed(-current->getHSpeed());
+		}
+		if (current->getX() < cg4.getSprite(current->getSpriteIndex())->getSprOriginX()) current->setHSpeed(-current->getHSpeed());
+
+		if (current->getY() > roomHeight - cg4.getSprite(current->getSpriteIndex())->getSprOriginY()) current->setVSpeed(-current->getVSpeed());
+		if (current->getY() < cg4.getSprite(current->getSpriteIndex())->getSprOriginY()) current->setVSpeed(-current->getVSpeed());
 		break;
 	case acExplosion:
-		if (cg4.getSprite(current->getSpriteIndex())->isEndOfAnimation()) cg4.destroyInstance(_instanceIndex);
+		if (current->checkInsEvent(evInsENDOFANIMATION)) cg4.destroyInstance(_instanceIndex);
 		break;
 	default:
-		return _actVar; //no break statement needed because 'return' acts as break
+		break; //no break statement needed because 'return' acts as break
 	}
-	_actVar.x = x+hspeed;
-	_actVar.y = y+vspeed;
-	_actVar.depth = depth;
-	_actVar.hspeed = hspeed;
-	_actVar.vspeed = vspeed;
-	return _actVar;
+	//These ending statements are supposed to globally changes for all actionIndices, for example, hspeed and vspeed needs to always
+	//be processed.
+	current->setX(current->getX() + current->getHSpeed());
+	current->setY(current->getY() + current->getVSpeed());
 }

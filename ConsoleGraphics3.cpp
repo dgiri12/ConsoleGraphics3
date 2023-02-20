@@ -19,15 +19,39 @@ int ConsoleGraphics3::getFps(int _frame)
 {
 	if (fpsSwitch == false) return _frame;
 	//print the fps
-	if (GetTickCount64() >= sysTime + 1000) {
+	if (GetTickCount64() >= FPSCounterTime + 1000) {
 		string title = GlobalTemp + to_string(_frame);
 		SetConsoleTitle(title.c_str());
-		sysTime = GetTickCount64();
+		FPSCounterTime = GetTickCount64();
 		return 0;
 	}
 	return _frame;
 }
-
+void ConsoleGraphics3::gameRender()
+{
+	for (int i = 0; i < instanceArraySize; i++)
+	{
+		if (instanceArray[i].isNull()) continue; //skip if it's a null instance
+		spriteArray[instanceArray[i].getSpriteIndex()].drawSprite(instanceArray[i].getX(), instanceArray[i].getY(), &screen, instanceArray[i].getStartTime(),instanceArray[i].getFirstDraw());
+		//I chose this place to update local events of instances
+		if (spriteArray[instanceArray[i].getSpriteIndex()].getImageIndex()
+			== spriteArray[instanceArray[i].getSpriteIndex()].getNoOfImages()) {
+			instanceArray[i].setInsEvent(evInsENDOFANIMATION, true);
+		}
+		else
+		{
+			instanceArray[i].setInsEvent(evInsENDOFANIMATION, false);
+		}
+	}
+	//Then print screen variable onto the console
+	drawText(5, 4, screenText);
+	
+	//wstring finalString=screen.screenData+L"                                                  ";
+	WriteConsoleOutputCharacterW(*myHandle, screen.screenData.c_str(), screen.screenWidth * screen.screenHeight, { 0,0 }, &dummy);
+	//WriteConsoleOutputCharacterW(*myHandle, finalString.c_str(), finalString.length(), { 0,0 }, &dummy);
+	frame = getFps(frame);
+	frame++;
+}
 
 void ConsoleGraphics3::flipFpsSwitch(bool _switch)
 {
@@ -89,7 +113,7 @@ int ConsoleGraphics3::addInstance(int _spriteIndex, int _actionIndex, int _x, in
 	tempInstanceArray = new Instance[newSize];
 	for (int i = 0; i < instanceArraySize; i++)
 	{
-		tempInstanceArray[i] = instanceArray[i];
+		tempInstanceArray[i].instanceCopy(instanceArray[i]);
 	}//copies older instances into new temp location
 	tempInstanceArray[newSize - 1].createInstance(_spriteIndex, _actionIndex, _x, _y, _depth);//final temp position is a fresh instance
 	//so create it using parameters provided.
@@ -151,20 +175,7 @@ Instance* ConsoleGraphics3::getInstance(int _instanceIndex)
 {
 	return &instanceArray[_instanceIndex];
 }
-void ConsoleGraphics3::gameRender()
-{
-	ActionVariables actVar;
-	for (int i = 0; i < instanceArraySize; i++)
-	{
-		if (instanceArray[i].isNull()) continue; //skip if it's a null instance
-		actVar = instanceArray[i].getActionVariables();
-		spriteArray[instanceArray[i].getSpriteIndex()].putSprite(actVar.x, actVar.y, &screen, instanceArray[i].getStartTime());
-	}
-	//Then print screen variable onto the console
-	WriteConsoleOutputCharacterW(*myHandle, screen.screenData.c_str(), screen.screenWidth * screen.screenHeight, { 0,0 }, &dummy);
-	frame = getFps(frame);
-	frame++;
-}
+
 
 bool ConsoleGraphics3::checkEvent(int _eventIndex)
 {
@@ -227,4 +238,9 @@ void ConsoleGraphics3::drawText(int _x, int _y, wstring _text)
 			}
 			pos++;
 		}
+}
+
+void ConsoleGraphics3::setScreenText(wstring _screenText)
+{
+	screenText = _screenText;
 }

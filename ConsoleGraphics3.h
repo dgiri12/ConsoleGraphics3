@@ -8,12 +8,17 @@
 #include"Instance.h"
 #include"Timer.h"
 
-#define eventArraySize 5
+#define eventArraySize 6
 #define evVK_A 0
 #define evVK_D 1
 #define evVK_W 2
 #define evVK_S 3
 #define evVK_SPACE 4
+#define evVK_E 5
+
+//C.7
+#define insEventArraySize 1
+#define evInsENDOFANIMATION 1000
 
 using namespace std;
 
@@ -25,8 +30,9 @@ class ConsoleGraphics3
 private:
 	//Global class variables
 	DWORD dummy;
-	ULONGLONG sysTime = GetTickCount64(); //used for fps calculation
+	ULONGLONG FPSCounterTime = GetTickCount64(); //used for fps calculation
 	Screen screen = { 140,45,L"" }; //Anything made from this class will forever have these dimensions
+	wstring screenText = L"";
 	HANDLE *myHandle;
 	
 	string GlobalTemp = "ASCII";
@@ -80,4 +86,5 @@ public://Function declaration
 	//Check the collision of first instance against second instance
 	bool checkCollision(int _instanceIndex1, int _instanceIndex2);
 	void drawText(int _x, int _y, wstring _text);
+	void setScreenText(wstring _screenText);
 };

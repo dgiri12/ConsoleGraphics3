@@ -7,3 +7,18 @@
 		//so that more sprites added will just contain incremental unique ids. This id will be the
 		//sprite's position in the array. A dynamic array is being used because I want random access.
 		//Linked list is sequential access, so would require more read time.
+//C.4 Instead of addVariableInt use setter methods instead.
+	//Although this method looks like a constructor, it's not.
+	//Preinstalled variables have already accessed the addVariableInt methods and switched on the
+	//firstVariableLoaded value. which is why when you use createInstance later, the constructor has 
+	//already been called, so you are adding these variables as customs, not changing the actual preinstalled ones.
+//C.5 //when this is true, the instance will be able to let the sprite know 
+	//that it is being drawn for the first time, so the startTime variable of the instance will be 
+	//calibrated to the value of noOfImages in Sprite class, that way the sprite animation always start at image zero.
+//C.6 Needs to be called in each step while updating instances, instance have their variables (like x and y) updated each 
+frame, do the same for local instance events as well, for example evInsEndOfAnimation
+//C.7//constants for Local Instance Events, these constants need to be updated both in this header file AND
+//the instance class, make sure values are the same in both places
+//Also make the index start at 1000 so that it gets unique index from the global event index
+//C.8 operator overloading for '=' didn't work, so this is a function that is called by the object that takes in a
+//instance type parameter, then copies the attributes of that parameter onto itself, i.e. turning itself into the parameter

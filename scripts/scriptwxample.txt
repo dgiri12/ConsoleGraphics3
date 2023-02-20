@@ -1,0 +1,65 @@
+<define> sprite Spaceship;
+</define>
+
+
+
+
+<define> instance Spaceship;
+sprite=Spaceship;
+x=30;
+y=30;
+BulletTimer=addTimer();
+canShoot=true;
+charge=0;
+</define>
+
+<define> action Spaceship;
+hspeed = 0;
+		vspeed = 0;
+		if (charge == 0) sprite=Spaceship;
+		if (charge > 40) current->setSpriteIndex(sprSpaceshipCharging);
+		if (objSpaceship.charge >= 100) current->setSpriteIndex(sprSpaceshipFullyCharged);
+
+		current->setUserVariableBoolValue(activate, true);
+		if (current->getUserVariableBoolValue(activate)) {
+			if (cg4.checkEvent(evVK_A)) hspeed = -current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_W)) vspeed = -current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_S)) vspeed = current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_D)) hspeed = current->getUserVariableIntValue(speed);
+		}
+
+		if (cg4.checkEvent(evVK_SPACE)) {
+			if (objSpaceship.charge < 100)objSpaceship.charge++;
+			if (objSpaceship.canShoot == true) {
+				int temp = cg4.addInstance(sprBullet, acBullet, x, y, 0);
+				bulletTimer->resetTime();
+				objSpaceship.canShoot = false;
+			}
+		}
+		if (objSpaceship.canShoot == false && !cg4.checkEvent(evVK_SPACE))
+		{
+			if (bulletTimer->getElapsedTime() >= 250)
+			{
+				objSpaceship.canShoot = true;
+			}
+		}
+		if (!cg4.checkEvent(evVK_SPACE))
+		{
+			if (objSpaceship.charge >= 100)
+			{
+				int temp = cg4.addInstance(sprFullChargeBullet, acBullet, x, y, 0);
+				objSpaceship.charge = 0;
+				break;
+			}
+			if (objSpaceship.charge > 40)
+			{
+				int temp = cg4.addInstance(sprChargeBullet, acBullet, x, y, 0);
+				objSpaceship.charge = 0;
+				break;
+			}
+		}
+		if (cg4.checkCollision(_instanceIndex, objSpaceship2))
+		{
+			cg4.destroyInstance(_instanceIndex);
+			int temp = cg4.addInstance(sprExplosion, acExplosion, x, y, 0);
+		}

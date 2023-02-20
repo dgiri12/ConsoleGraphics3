@@ -1,0 +1,12 @@
+1.2.2020
+-
+-Add recalibration of the startTime variable to the change sprite functionality because sprite needs to start at image zero.
+-Finish the particleSystem class
+-Add a feature where the instance will be able to see if the animation is over, and then destroy itself
+-Add local events for instances
+-Collision needs to be detected with instances based on their actionIndex, there can be multiple spaceships, but they have the same
+action index because they need to be programmed only once on their actions.
+
+1.3.2020
+-Currently stuck in trying to set the ENDOFANIMATION event in game.render() function inside consolegraphics3.cpp
+if (spriteArray[instanceArray[i].getSpriteIndex()].getImageIndex()==0) instanceArray[i].setInsEvent();

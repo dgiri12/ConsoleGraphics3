@@ -14,7 +14,8 @@ public:
 	}
 	ULONGLONG getElapsedTime()
 	{
-		return GetTickCount64() - startTime;
+		ULONGLONG temp = GetTickCount64() - startTime;
+		return temp;
 	}//how much time has passed since it's creation (milliseconds)
 	void resetTime()
 	{

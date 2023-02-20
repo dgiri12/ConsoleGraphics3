@@ -10,6 +10,7 @@ Sprite::Sprite()
 	sprOriginY=0;
 	noOfImages=1;
 	imagePerSec=1;
+	imageIndex = 0;
 	bool transparent = false;
 };
 
@@ -87,11 +88,23 @@ void Sprite::createSprite(string _filename)
 
 };
 
-void Sprite::putSprite(int _x, int _y,Screen *_screen, ULONGLONG _startTime )
+void Sprite::drawSprite(int _x, int _y,Screen *_screen, ULONGLONG *_startTime, bool *_firstDraw ) 
+//startTIme is a pointer because C.5
 {
 	_y = _y - sprOriginY;
 	_x = _x - sprOriginX;
-	ULONGLONG seconds = floor((GetTickCount64() - _startTime) / (1000 / imagePerSec));
+	ULONGLONG deltaTime = GetTickCount64() - *_startTime;
+	ULONGLONG seconds = floor((deltaTime) / (1000 / imagePerSec));
+	//A different routine for imageIndex calculation if _firstDraw==true)
+	if (*_firstDraw == true) {
+		 while (seconds%noOfImages!=0){
+			 //incrementing seconds by 1 means incrementing _startTime by the following formula
+			 //the following just means incrementing _startTime by 1
+			 *_startTime += 1000;
+			 seconds = floor((GetTickCount64() - *_startTime) / (1000 / imagePerSec));//don't use delta time here
+		 }
+		 *_firstDraw = false; //switch it back so the instance knows
+	}
 	imageIndex = floor(seconds % noOfImages);
 	if (imageIndex > noOfImages) {
 		imageIndex = 0;
@@ -146,7 +159,11 @@ int Sprite::getSprOriginY()
 {
 	return sprOriginY;
 }
-bool Sprite::isEndOfAnimation()
+int Sprite::getImageIndex()
 {
-	return imageIndex == noOfImages-1;
+	return imageIndex;
+}
+int Sprite::getNoOfImages()
+{
+	return noOfImages;
 }
