@@ -1,5 +1,6 @@
-//ConsoleGraphics6
-//add timerArray
+//ConsoleGraphics7
+//contains userdefined Int and Bool variable addition functionality for instances.
+//only contains test variables, this functionality hasn't been implemented into the program yet.
 
 #include"main.h"
 
@@ -22,7 +23,7 @@ int main()
 	changeVar.hspeed = 1;
 	change->setActionVariables(changeVar);
 	change = nullptr;
-	  
+
 	while (1)//main game loop still happens in the main program
 	{
 		gameUpdate();
@@ -76,10 +77,13 @@ ActionVariables applyAction(int _actionIndex, ActionVariables _actVar, int _inst
 		if (objSpaceship.charge > 40) current->setSpriteIndex(sprSpaceshipCharging);
 		if (objSpaceship.charge >= 100) current->setSpriteIndex(sprSpaceshipFullyCharged);
 
-		if (cg4.checkEvent(evVK_A)) hspeed = -1;
-		if (cg4.checkEvent(evVK_W)) vspeed = -1;
-		if (cg4.checkEvent(evVK_S)) vspeed = 1;
-		if (cg4.checkEvent(evVK_D)) hspeed = 1;
+		current->setUserVariableBoolValue(activate, true);
+		if (current->getUserVariableBoolValue(activate)) {
+			if (cg4.checkEvent(evVK_A)) hspeed = -current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_W)) vspeed = -current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_S)) vspeed = current->getUserVariableIntValue(speed);
+			if (cg4.checkEvent(evVK_D)) hspeed = current->getUserVariableIntValue(speed);
+		}
 
 		if (cg4.checkEvent(evVK_SPACE)) {
 			if (objSpaceship.charge < 100)objSpaceship.charge++;

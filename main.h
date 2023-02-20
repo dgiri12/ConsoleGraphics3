@@ -41,3 +41,9 @@ struct stSpaceship //st->struct
 	int charge = 0;
 	int objSpaceshipIndex = cg4.addInstance(sprSpaceship, acSpaceship, 30, 30, 0);
 }; stSpaceship objSpaceship; //create only one instance of this struct, i am only doing this to group the variable for each instance
+
+//uservariableint test
+Instance* temp = cg4.getInstance(objSpaceship.objSpaceshipIndex);
+int speed = temp->addUserVariableInt("speed", 1);
+int activate = temp->addUserVariableBool("activate", false);
+

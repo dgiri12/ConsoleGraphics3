@@ -1,6 +1,0 @@
-﻿  ConsoleGraphics3.cpp
-C:\Users\Dj\source\repos\ConsoleGraphics6\ConsoleGraphics3.cpp(222,21): warning C4018: '<': signed/unsigned mismatch
-  Instance.cpp
-  main.cpp
-  Generating Code...
-  ConsoleGraphics1.vcxproj -> C:\Users\Dj\source\repos\ConsoleGraphics6\Debug\ConsoleGraphics6.exe
